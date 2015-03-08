@@ -29,8 +29,9 @@ function dataURItoBlob(dataURI) {
 </head>
 <body>
 <div style="margin: 0 auto; width: 50%; margin-left: 25%;">
+  <!--width="320" height="240"-->
   <video id="live" width="320" height="240" autoplay style="display: inline;"></video>
-  <canvas width="320" id="canvas" height="240" style="display: inline;"></canvas>
+  <canvas id="canvas" width="320" height="240" style="display: inline;"></canvas>
 </div>
 <div id="output" style="width:50%; margin-left:25%;">
   <img id="target" style="display:inline"/>
@@ -60,7 +61,7 @@ function dataURItoBlob(dataURI) {
     video.src = 'dance.mp4'; // fallback.
   }
   
-  var ws = new WebSocket("ws://127.0.0.1:8124", "echo-protocol");
+  var ws = new WebSocket("ws://127.0.0.1:8089", "echo-protocol");
   ws.onopen = function () {
     console.log("Opened connection to websocket");
   }

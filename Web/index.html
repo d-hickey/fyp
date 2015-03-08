@@ -4,69 +4,23 @@
     <style type="text/css">
       html, body, #map-canvas { height: 100%; margin: 0; padding: 0;}
     </style>
-    <script type="text/javascript"
-      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBr6DnCqjhg2d7mgGwI6FXy3_C41m0N3mc">
-    </script>
-    <script type="text/javascript">
-    var map = null;
-      function initialize() {
-        var mapOptions = {
-          center: { lat: 53, lng: -6},
-          zoom: 8
-        };
-        map = new google.maps.Map(document.getElementById('map-canvas'),
-            mapOptions);
-        
-      }
-      function test(){
-        var test = map.center + {lat: 5, lng: 5};
-        alert("zoom:" + map.zoom + " lat:" + map.center.lat() + " lng:" + map.center.lng());
-        //map.setCenter(new google.maps.LatLng(-34.397, 150.644));
-        map.setCenter({lat: 53.3, lng: -6});
-        
-        map.setZoom(10);
-        
-      }
-      google.maps.event.addDomListener(window, 'load', initialize);
-    </script>
+    
+    <script src="http://code.jquery.com/jquery-1.11.2.min.js"></script>
+    <script src="http://code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+    
+    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBr6DnCqjhg2d7mgGwI6FXy3_C41m0N3mc"></script>
+    <script type="text/javascript"src="map.js"></script>
+    
   </head>
   <body>
+      
+    <video id="live" width="320" height="240" autoplay style="display: none;"></video>
+    <canvas id="canvas" width="320" height="240" style="display: none;"></canvas>
     
-    <script>
-    function hasGetUserMedia() {
-      return !!(navigator.getUserMedia || navigator.webkitGetUserMedia ||
-                navigator.mozGetUserMedia || navigator.msGetUserMedia);
-    }
+    <script type="text/javascript" src="webrtc.js"></script>
 
-    if (hasGetUserMedia()) {
-      //alert('getUserMedia() is definitely supported in your browser');
-    } else {
-      alert('getUserMedia() is not supported in your browser');
-    }
-    </script>
-    <div id="video" style="width:40%; left:0px; position:absolute" onclick="test()">
-    <video autoplay></video>
-    </div>
-    <script>
-      var errorCallback = function(e) {
-        console.log('Reeeejected!', e);
-      };
-
-      navigator.getUserMedia  = navigator.getUserMedia ||
-                              navigator.webkitGetUserMedia ||
-                              navigator.mozGetUserMedia ||
-                              navigator.msGetUserMedia;
-
-    var video = document.querySelector('video');
-
-    if (navigator.getUserMedia) {
-      navigator.getUserMedia({video: true}, function(stream) {
-        video.src = window.URL.createObjectURL(stream);
-      }, errorCallback);
-    } else {
-      video.src = 'dance.webm'; // fallback.
-    }
-    </script>
-    <div id="map-canvas" style="width:60%; right:0px; position: absolute"></div>
+    <script type="text/javascript" src="websocket.js"></script>
+    
+    <div id="map-canvas"></div>
   </body>
 </html>

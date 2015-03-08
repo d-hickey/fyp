@@ -19,26 +19,25 @@ CascadeClassifier eyes_cascade;
 string window_name = "Capture - Face detection";
 RNG rng(12345);
 
-/** @function main */
-int main(int argc, const char** argv)
-{
+/** function main */
+int main(int argc, const char** argv){
 	Mat frame;
 
-	//-- 1. Load the cascades
+	//Load the cascades
 	if (!face_cascade.load(face_cascade_name)){ printf("--(!)Error loading\n"); return -1; };
-	if (!eyes_cascade.load(eyes_cascade_name)){ printf("--(!)Error loading\n"); return -1; };
+	//if (!eyes_cascade.load(eyes_cascade_name)){ printf("--(!)Error loading\n"); return -1; };
 
-	//-- 2. Read in image
+	// Read in image
 	frame = imread(argv[1], CV_LOAD_IMAGE_COLOR);
+
+	//Detect Face in image and save result
 	detectAndSave(frame, argv[2]);
 	waitKey();
-	//imshow(window_name, frame);
 
 }
 
-/** @function detectAndDisplay */
-void detectAndSave(Mat frame, string filename)
-{
+/** function detectAndSave */
+void detectAndSave(Mat frame, string filename){
 	std::vector<Rect> faces;
 	Mat frame_gray;
 
@@ -47,16 +46,19 @@ void detectAndSave(Mat frame, string filename)
 
 	//-- Detect faces
 	face_cascade.detectMultiScale(frame_gray, faces, 1.1, 2, 0 | CV_HAAR_SCALE_IMAGE, Size(30, 30));
+	int locx, locy, area;
+	locx = 180;
+	locy = 110;
+	area = 14641;
+	if(faces.size() == 1){
+		Point center(faces[0].x + faces[0].width*0.5, faces[0].y + faces[0].height*0.5);
+		ellipse(frame, center, Size(faces[0].width*0.5, faces[0].height*0.5), 0, 0, 360, Scalar(255, 0, 255), 4, 8, 0);
 
-	for (size_t i = 0; i < faces.size(); i++)
-	{
-		Point center(faces[i].x + faces[i].width*0.5, faces[i].y + faces[i].height*0.5);
-		ellipse(frame, center, Size(faces[i].width*0.5, faces[i].height*0.5), 0, 0, 360, Scalar(255, 0, 255), 4, 8, 0);
-
+		/* //Detect eyes and bound locations, not currently used
 		Mat faceROI = frame_gray(faces[i]);
 		std::vector<Rect> eyes;
-
-		//-- In each face, detect eyes
+		
+		//Eye detection
 		eyes_cascade.detectMultiScale(faceROI, eyes, 1.1, 2, 0 | CV_HAAR_SCALE_IMAGE, Size(30, 30));
 
 		for (size_t j = 0; j < eyes.size(); j++)
@@ -65,8 +67,12 @@ void detectAndSave(Mat frame, string filename)
 			int radius = cvRound((eyes[j].width + eyes[j].height)*0.25);
 			circle(frame, center, radius, Scalar(255, 0, 0), 4, 8, 0);
 		}
+		*/
+		area = faces[0].width * faces[0].height;
+		cout << center.x << "," << center.y << "," << area << endl;
 	}
-	//-- Show what you got
+	//Show what you got
+	
 	//imshow(window_name, frame);
 	imwrite(filename, frame);
 }
