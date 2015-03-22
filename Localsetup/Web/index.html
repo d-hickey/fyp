@@ -1,0 +1,26 @@
+<!DOCTYPE html>  
+<html>
+  <head>
+    <style type="text/css">
+      html, body, #map-canvas { height: 100%; margin: 0; padding: 0;}
+    </style>
+    
+    <script src="http://code.jquery.com/jquery-1.11.2.min.js"></script>
+    <script src="http://code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+    
+    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBr6DnCqjhg2d7mgGwI6FXy3_C41m0N3mc"></script>
+    <script type="text/javascript"src="map.js"></script>
+    
+  </head>
+  <body>
+      
+    <video id="live" width="320" height="240" autoplay style="display: none;"></video>
+    <canvas id="canvas" width="320" height="240" style="display: none;"></canvas>
+    
+    <script type="text/javascript" src="webrtc.js"></script>
+
+    <script type="text/javascript" src="websocket.js"></script>
+    
+    <div id="map-canvas"></div>
+  </body>
+</html>

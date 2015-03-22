@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="http://code.jquery.com/jquery-1.11.2.min.js"></script>
+<script src="http://code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+
+<script>
+function dataURItoBlob(dataURI) {
+    // convert base64/URLEncoded data component to raw binary data held in a string
+    var byteString;
+    if (dataURI.split(',')[0].indexOf('base64') >= 0)
+        byteString = atob(dataURI.split(',')[1]);
+    else
+        byteString = unescape(dataURI.split(',')[1]);
+
+    // separate out the mime component
+    var mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
+
+    // write the bytes of the string to a typed array
+    var ia = new Uint8Array(byteString.length);
+    for (var i = 0; i < byteString.length; i++) {
+        ia[i] = byteString.charCodeAt(i);
+    }
+
+    return new Blob([ia], {type:mimeString});
+}
+</script>
+
+</head>
+<body>
+<div style="margin: 0 auto; width: 50%; margin-left: 25%;">
+  <!--width="320" height="240"-->
+  <video id="live" width="320" height="240" autoplay style="display: inline;"></video>
+  <canvas id="canvas" width="320" height="240" style="display: inline;"></canvas>
+</div>
+<div id="output" style="width:50%; margin-left:25%;">
+  <img id="target" style="display:inline"/>
+</div>
+
+<script>
+  var video = $("#live").get()[0];
+  var canvas = $("#canvas");
+  var ctx = canvas.get()[0].getContext('2d');
+
+  var errorCallback = function(e) {
+    console.log('Reeeejected!', e);
+  };
+
+  navigator.getUserMedia  = navigator.getUserMedia ||
+                          navigator.webkitGetUserMedia ||
+                          navigator.mozGetUserMedia ||
+                          navigator.msGetUserMedia;
+
+
+  if (navigator.getUserMedia) {
+    navigator.getUserMedia({video: true}, function(stream) {
+      video.src = window.URL.createObjectURL(stream);
+    }, errorCallback);
+  } else {
+    alert('Your browser does not support getUserMedia()');
+    video.src = 'dance.mp4'; // fallback.
+  }
+  
+  var ws = new WebSocket("ws://darragh-fyp.netsoc.tcd.ie:8089", "echo-protocol");
+  ws.onopen = function () {
+    console.log("Opened connection to websocket");
+  }
+  
+  timer = setInterval(
+    function () {
+      ctx.drawImage(video, 0, 0, 320, 240);
+      var data = canvas.get()[0].toDataURL('image/jpeg', 1.0);
+      var blob = dataURItoBlob(data);
+      ws.send(blob);
+    }, 500);
+    
+  ws.addEventListener("message", function(e) {
+    // The data is an image object
+    // We must give the image a url
+    //console.log(e);
+    //console.log(e.data);
+    var url= window.URL.createObjectURL(e.data);
+    //console.log(url);
+ 
+    var target = document.getElementById("target");
+    target.onload = function() {
+      window.URL.revokeObjectURL(url);
+    };
+    // show the image 
+    target.src = url;
+  });
+</script>
+</body>
+</html>
