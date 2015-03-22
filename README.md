@@ -1,4 +1,4 @@
 # fyp
 Darragh's Final Year Project
 
-I'll do this later
+To compile on ubuntu: ```g++ `pkg-config opencv --cflags --libs` main.cpp ```
