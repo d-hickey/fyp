@@ -47,9 +47,9 @@ void detectAndSave(Mat frame, string filename){
 	//-- Detect faces
 	face_cascade.detectMultiScale(frame_gray, faces, 1.1, 2, 0 | CV_HAAR_SCALE_IMAGE, Size(30, 30));
 	int locx, locy, area;
-	locx = 180;
-	locy = 110;
-	area = 14641;
+	locx = 0;
+	locy = 0;
+	area = 0;
 	if(faces.size() == 1){
 		Point center(faces[0].x + faces[0].width*0.5, faces[0].y + faces[0].height*0.5);
 		ellipse(frame, center, Size(faces[0].width*0.5, faces[0].height*0.5), 0, 0, 360, Scalar(255, 0, 255), 4, 8, 0);
@@ -69,8 +69,10 @@ void detectAndSave(Mat frame, string filename){
 		}
 		*/
 		area = faces[0].width * faces[0].height;
-		cout << center.x << "," << center.y << "," << area << endl;
+		locx = center.x;
+		locy = center.y;
 	}
+	cout << locx << "," << locy << "," << area << endl;
 	//Show what you got
 	
 	//imshow(window_name, frame);

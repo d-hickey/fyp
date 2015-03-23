@@ -22,7 +22,7 @@ function dataURItoBlob(dataURI) {
     return new Blob([ia], {type:mimeString});
 }
 
-var ws = new WebSocket("ws://darragh-fyp.netsoc.tcd.ie:8089", "echo-protocol");
+var ws = new WebSocket("ws://dar-fyp.netsoc.tcd.ie:8089", "echo-protocol");
 ws.onopen = function () {
   console.log("Opened connection to websocket");
 }
@@ -33,39 +33,47 @@ timer = setInterval(
     var data = canvas.get()[0].toDataURL('image/jpeg', 1.0);
     var blob = dataURItoBlob(data);
     ws.send(blob);
-  }, 500);
+  }, 1000);
     
 ws.addEventListener("message", function(e) {
   // The data is the head location and size
   var loc = e.data.split(",");
-  console.log(e);
-  console.log(loc);
-  
-  var zum = map.zoom;
-  var lat = map.center.lat();
-  var lng = map.center.lng();
-  if((loc[0] - locx) > 30){
-    lng = lng - 1;
+  //console.log(e);
+  //console.log(loc);
+  if(map == null){
+    locx = loc[0];
+    locy = loc[1];
+    size = loc[2];
+    console.log(locx + " " + locy + " " + size);
   }
-  else if((locx - loc[0]) > 30){
-    lng = lng + 1;
+  else if(loc[0] != 0){
+    var zum = map.zoom;
+    var lat = map.center.lat();
+    var lng = map.center.lng();
+    //update zoom
+    if((loc[2] - size) > 3000){
+      zum = zum + 1;
+    }
+    else if((size - loc[2]) > 3000){
+      zum = zum - 1;
+    }
+    //update latitude and longitude
+    if((loc[0] - locx) > 30){
+      lng = lng - (90 / Math.pow(2, (zum-2)));
+    }
+    else if((locx - loc[0]) > 30){
+      lng = lng +  (90 / Math.pow(2, (zum-2)));
+    }
+    if((loc[1] - locy) > 30){
+      lat = lat - (90 / Math.pow(2, (zum-2)));
+    }
+    else if((locy - loc[1]) > 30){
+      lat = lat + (90 / Math.pow(2, (zum-2)));
+    }
+    
+    map.setZoom(zum);
+    console.log(lng + " " + lat + " " + zum);
+    map.setCenter({lat: lat, lng: lng});
   }
-  
-  if((loc[1] - locy) > 30){
-    lat = lat - 1;
-  }
-  else if((locy - loc[1]) > 30){
-    lat = lat + 1;
-  }
-  
-  if((loc[2] - size) > 3000){
-    zum = zum + 1;
-  }
-  else if((size - loc[2]) > 3000){
-    zum = zum - 1;
-  }
-  
-  map.setZoom(zum);
-  map.setCenter({lat: lat, lng: lng});
   
 });

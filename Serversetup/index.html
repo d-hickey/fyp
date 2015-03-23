@@ -13,8 +13,11 @@
     
   </head>
   <body>
-      
-    <video id="live" width="320" height="240" autoplay style="display: none;"></video>
+    <div id="videoin" style="width:50%; margin-left:25%">  
+      <video id="live" width="320" height="240" autoplay style="display:inline;"></video>
+      <p>Please choose your resting position, map movement will be based on this position</p>
+      <button type="button" onclick="switchToMap()">Set Position</button>
+    </div>
     <canvas id="canvas" width="320" height="240" style="display: none;"></canvas>
     
     <script type="text/javascript" src="webrtc.js"></script>

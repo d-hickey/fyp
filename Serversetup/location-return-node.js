@@ -39,7 +39,7 @@ wsServer.on('request', function(r){
         } else {
           //console.log("The file was saved!");
           var childProcess = require('child_process');
-          var command = "a.out " + filename + " " + outfile;
+          var command = "./a.out " + filename + " " + outfile;
           //var retstring = "";
           var face = childProcess.exec(command, function (error, stdout, stderr) {
             if (error) {
