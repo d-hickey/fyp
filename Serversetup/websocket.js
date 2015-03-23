@@ -22,7 +22,7 @@ function dataURItoBlob(dataURI) {
     return new Blob([ia], {type:mimeString});
 }
 
-var ws = new WebSocket("ws://dar-fyp.netsoc.tcd.ie:8089", "echo-protocol");
+var ws = new WebSocket("ws://darragh-fyp.netsoc.tcd.ie:8089", "echo-protocol");
 ws.onopen = function () {
   console.log("Opened connection to websocket");
 }
