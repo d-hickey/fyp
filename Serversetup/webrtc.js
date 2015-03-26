@@ -23,5 +23,5 @@ if (navigator.getUserMedia) {
   }, errorCallback);
 } else {
   alert('Your browser does not support getUserMedia()');
-  video.src = 'dance.mp4'; // fallback.
+  //video.src = 'dance.mp4'; // fallback.
 }
