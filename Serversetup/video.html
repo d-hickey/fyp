@@ -30,8 +30,8 @@ function dataURItoBlob(dataURI) {
 <body>
 <div style="margin: 0 auto; width: 50%; margin-left: 25%;">
   <!--width="320" height="240"-->
-  <video id="live" width="320" height="240" autoplay style="display: inline;"></video>
-  <canvas id="canvas" width="320" height="240" style="display: inline;"></canvas>
+  <video id="live" width="640" height="480" autoplay style="display: inline;"></video>
+  <canvas id="canvas" width="640" height="480" style="display: inline;"></canvas>
 </div>
 <div id="output" style="width:50%; margin-left:25%;">
   <img id="target" style="display:inline"/>
@@ -68,7 +68,7 @@ function dataURItoBlob(dataURI) {
   
   timer = setInterval(
     function () {
-      ctx.drawImage(video, 0, 0, 320, 240);
+      ctx.drawImage(video, 0, 0, 640, 480);
       var data = canvas.get()[0].toDataURL('image/jpeg', 1.0);
       var blob = dataURItoBlob(data);
       ws.send(blob);

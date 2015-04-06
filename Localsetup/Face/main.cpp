@@ -38,7 +38,7 @@ int main(int argc, const char** argv){
 
 /** function detectAndSave */
 void detectAndSave(Mat frame, string filename){
-	std::vector<Rect> faces;
+	vector<Rect> faces;
 	Mat frame_gray;
 
 	cvtColor(frame, frame_gray, CV_BGR2GRAY);
@@ -46,6 +46,8 @@ void detectAndSave(Mat frame, string filename){
 
 	//-- Detect faces
 	face_cascade.detectMultiScale(frame_gray, faces, 1.1, 2, 0 | CV_HAAR_SCALE_IMAGE, Size(30, 30));
+
+	Rect face;
 	int locx, locy, area, eye1x, eye1y, eye2x, eye2y;
 	locx = 0;
 	locy = 0;
@@ -54,38 +56,66 @@ void detectAndSave(Mat frame, string filename){
 	eye2x = 0;
 	eye2y = 0;
 	area = 0;
-	if (faces.size() == 1){
-		Point center(faces[0].x + faces[0].width*0.5, faces[0].y + faces[0].height*0.5);
-		ellipse(frame, center, Size(faces[0].width*0.5, faces[0].height*0.5), 0, 0, 360, Scalar(255, 0, 255), 4, 8, 0);
 
-		area = faces[0].width * faces[0].height;
+	if (faces.size() > 0){
+		face = faces[0];
+		for (int i = 1; i < faces.size(); i++){
+			if ((faces[i].width * faces[i].height) > (face.width * face.height)){
+				face = faces[i];
+			}
+		}
+		Point center(face.x + face.width*0.5, face.y + face.height*0.5);
+		ellipse(frame, center, Size(face.width*0.5, face.height*0.5), 0, 0, 360, Scalar(255, 0, 255), 4, 8, 0);
+
+		area = face.width * face.height;
 		locx = center.x;
 		locy = center.y;
 
 		//Detect eyes and bound locations
-		Mat faceROI = frame_gray(faces[0]);
-		std::vector<Rect> eyes;
+		Mat faceROI = frame_gray(face);
+		vector<Rect> eyes;
+
+		/*
+		cout << face << endl;
+		cout << face.x << endl;
+		cout << face.y << endl;
+		cout << (face.x + face.width) << endl;
+		cout << face.y + face.height << endl;
+		*/
 
 		//Eye detection
 		eyes_cascade.detectMultiScale(faceROI, eyes, 1.1, 2, 0 | CV_HAAR_SCALE_IMAGE, Size(30, 30));
-
+		if (eyes.size() > 2){
+			for (int i = 0; i < eyes.size(); i++){
+				for (int j = eyes.size() - 1; j > i; j--){
+					if (eyes[i].x < (eyes[j].x + eyes[j].width) && 
+						(eyes[i].x + eyes[i].width) > eyes[j].x &&
+						eyes[i].y < (eyes[j].y + eyes[j].height) &&
+						(eyes[i].y + eyes[i].height) > eyes[j].y
+					){
+						eyes.erase(eyes.begin() + j);
+					}
+				}
+			}
+		}
 		if (eyes.size() == 2){	
-			center = Point(faces[0].x + eyes[0].x + eyes[0].width*0.5, faces[0].y + eyes[0].y + eyes[0].height*0.5);
+			center = Point(face.x + eyes[0].x + eyes[0].width*0.5, face.y + eyes[0].y + eyes[0].height*0.5);
 			int radius = cvRound((eyes[0].width + eyes[0].height)*0.25);
 			circle(frame, center, radius, Scalar(255, 0, 0), 4, 8, 0);
 			eye1x = center.x;
 			eye1y = center.y;
 
-			center = Point(faces[0].x + eyes[1].x + eyes[1].width*0.5, faces[0].y + eyes[1].y + eyes[1].height*0.5);
+			center = Point(face.x + eyes[1].x + eyes[1].width*0.5, face.y + eyes[1].y + eyes[1].height*0.5);
 			radius = cvRound((eyes[1].width + eyes[1].height)*0.25);
 			circle(frame, center, radius, Scalar(255, 0, 0), 4, 8, 0);
 			eye2x = center.x;
 			eye2y = center.y;
 		}	
 	}
+	//output locations
 	cout << locx << "," << locy << "," << area << "," << eye1x << "," << eye1y << "," << eye2x << "," << eye2y << endl;
-	//Show what you got
 	
+	//Show what you got
 	//imshow(window_name, frame);
-	imwrite(filename, frame);
+	cv::imwrite(filename, frame);
 }

@@ -33,7 +33,7 @@ timer = setInterval(
     var data = canvas.get()[0].toDataURL('image/jpeg', 1.0);
     var blob = dataURItoBlob(data);
     ws.send(blob);
-  }, 1000);
+  }, 500);
     
 ws.addEventListener("message", function(e) {
   // The data is the head location and size
@@ -63,10 +63,10 @@ ws.addEventListener("message", function(e) {
     var lat = map.center.lat();
     var lng = map.center.lng();
     //update zoom
-    if((loc[2] - size) > 10000){
+    if((loc[2] - size) > 20000){
       zum = zum + 1;
     }
-    else if((size - loc[2]) > 10000){
+    else if((size - loc[2]) > 20000){
       zum = zum - 1;
     }
     //update latitude and longitude
@@ -85,30 +85,30 @@ ws.addEventListener("message", function(e) {
         i2y = loc[4];
       }
       if(((loc[0] - locx) > 10) && ((i1x - eye1x) > 20)){
-        lng = lng - (90 / Math.pow(2, (zum-2)));
+        lng = lng - (22 / Math.pow(2, (zum-2)));
       }
       else if(((locx - loc[0]) > 10) && ((eye1x - i1x) > 20)){
-        lng = lng +  (90 / Math.pow(2, (zum-2)));
+        lng = lng +  (22 / Math.pow(2, (zum-2)));
       }
       if(((loc[1] - locy) > 10) && ((i1y - eye1y) > 10)){
-        lat = lat - (90 / Math.pow(2, (zum-2)));
+        lat = lat - (22 / Math.pow(2, (zum-2)));
       }
       else if(((locy - loc[1]) > 10) && ((eye1y - i1y) > 10)){
-        lat = lat + (90 / Math.pow(2, (zum-2)));
+        lat = lat + (22 / Math.pow(2, (zum-2)));
       }
     }
     else{
       if((loc[0] - locx) > 30){
-        lng = lng - (90 / Math.pow(2, (zum-2)));
+        lng = lng - (22 / Math.pow(2, (zum-2)));
       }
       else if((locx - loc[0]) > 30){
-        lng = lng +  (90 / Math.pow(2, (zum-2)));
+        lng = lng +  (22 / Math.pow(2, (zum-2)));
       }
       if((loc[1] - locy) > 30){
-        lat = lat - (90 / Math.pow(2, (zum-2)));
+        lat = lat - (22 / Math.pow(2, (zum-2)));
       }
       else if((locy - loc[1]) > 30){
-        lat = lat + (90 / Math.pow(2, (zum-2)));
+        lat = lat + (22 / Math.pow(2, (zum-2)));
       }
     }
     

@@ -72,7 +72,7 @@ function dataURItoBlob(dataURI) {
       var data = canvas.get()[0].toDataURL('image/jpeg', 1.0);
       var blob = dataURItoBlob(data);
       ws.send(blob);
-    }, 1000);
+    }, 500);
     
   ws.addEventListener("message", function(e) {
     // The data is an image object
