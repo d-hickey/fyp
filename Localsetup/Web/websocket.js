@@ -1,17 +1,20 @@
 var locx, locy;
 var size;
 var eye1x, eye1y, eye2x, eye2y;
+var startTime;
+var average = 0;
+var count = 0;
 
-function dataURItoBlob(dataURI) {
+function converttoBlob(encoded) {
     // convert base64/URLEncoded data component to raw binary data held in a string
     var byteString;
-    if (dataURI.split(',')[0].indexOf('base64') >= 0)
-        byteString = atob(dataURI.split(',')[1]);
+    if (encoded.split(',')[0].indexOf('base64') >= 0)
+        byteString = atob(encoded.split(',')[1]);
     else
-        byteString = unescape(dataURI.split(',')[1]);
+        byteString = unescape(encoded.split(',')[1]);
 
     // separate out the mime component
-    var mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
+    var mimeString = encoded.split(',')[0].split(':')[1].split(';')[0];
 
     // write the bytes of the string to a typed array
     var ia = new Uint8Array(byteString.length);
@@ -29,9 +32,10 @@ ws.onopen = function () {
   
 timer = setInterval(
   function () {
+    startTime = new Date();
     ctx.drawImage(video, 0, 0, 640, 480);
     var data = canvas.get()[0].toDataURL('image/jpeg', 1.0);
-    var blob = dataURItoBlob(data);
+    var blob = converttoBlob(data);
     ws.send(blob);
   }, 500);
     
@@ -39,8 +43,8 @@ ws.addEventListener("message", function(e) {
   // The data is the head location and size
   var loc = e.data.split(",");
   //console.log(e);
-  console.log(loc);
-  //loc is [face-pos-x, face-pos-y, face-size, eye-1-pos-x, eye-1-pos-y, eye-2-pos-x, eye-2-pos-y]
+  //console.log(loc);
+  //loc is [face-pos-x, face-pos-y, face-size, eye-1-pos-x, eye-1-pos-y, eye-2-pos-x, eye-2-pos-y, hand-pos]
   if(map == null && loc[0] != 0){
     locx = loc[0];
     locy = loc[1];
@@ -69,8 +73,17 @@ ws.addEventListener("message", function(e) {
     else if((size - loc[2]) > 20000){
       zum = zum - 1;
     }
+    
     //update latitude and longitude
-    if(eye1x != 0 && loc[3] != 0){
+    //hand location takes precedence 
+    if(loc[7] == "right"){
+      lng = lng +  (22 / Math.pow(2, (zum-2)));
+    }
+    else if(loc[7] == "left"){
+      lng = lng - (22 / Math.pow(2, (zum-2)));
+    }
+    //next is eye location in conjuction with head location
+    else if(eye1x != 0 && loc[3] != 0){
       var i1x, i1y, i2x, i2y;
       if(loc[3] < loc[5]){
         i1x = loc[3];
@@ -97,6 +110,7 @@ ws.addEventListener("message", function(e) {
         lat = lat + (22 / Math.pow(2, (zum-2)));
       }
     }
+    //finally just head location
     else{
       if((loc[0] - locx) > 30){
         lng = lng - (22 / Math.pow(2, (zum-2)));
@@ -113,8 +127,16 @@ ws.addEventListener("message", function(e) {
     }
     
     map.setZoom(zum);
-    console.log(lng + " " + lat + " " + zum);
+    //console.log(lng + " " + lat + " " + zum);
     map.setCenter({lat: lat, lng: lng});
+    var endTime = new Date();
+    var diff = endTime - startTime;
+    diff /= 1000;
+    average += diff;
+    count++;
+    console.log("time elapsed: " + diff);
+    console.log("average: " + (average/count))
+    
   }
   
 });

@@ -58,7 +58,6 @@ function dataURItoBlob(dataURI) {
     }, errorCallback);
   } else {
     alert('Your browser does not support getUserMedia()');
-    video.src = 'dance.mp4'; // fallback.
   }
   
   var ws = new WebSocket("ws://127.0.0.1:8089", "echo-protocol");

@@ -48,19 +48,14 @@ wsServer.on('request', function(r){
               console.log('Signal received: '+error.signal);
             }
             if(clients[id]){
-
               clients[id].sendUTF(stdout);
             }
-            console.log('Child Process STDOUT: '+stdout);
-            console.log('Child Process STDERR: '+stderr);
+            //console.log('Child Process STDOUT: '+stdout);
+            //console.log('Child Process STDERR: '+stderr);
           });
 
           face.on('exit', function (code) {
-            console.log('Child process exited with exit code '+code);
-            /*if(clients[id]){
-              console.log(retstring);
-              clients[id].sendUTF(retstring);
-            }*/
+            //console.log('Child process exited with exit code '+code);
             fs.unlink(outfile, function (err){
               if (err) throw err;
             });
